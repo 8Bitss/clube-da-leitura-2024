@@ -33,7 +33,10 @@ namespace ClubeDaLeitura.ConsoleApp.ModuloEmprestimo
             Console.WriteLine($"2 - Editar {tipoEntidade}");
             Console.WriteLine($"3 - Excluir {tipoEntidade}");
             Console.WriteLine($"4 - Visualizar {tipoEntidade}s");
-            Console.WriteLine($"5 - Visualizar Emprestimos do Mês");
+            Console.WriteLine("5 - Visualizar Emprestimos do Mês");
+            Console.WriteLine("6 - Visualizar Emprestimos do Dia");
+            Console.WriteLine("7 - Devolução de Emprestimo");
+
 
             Console.WriteLine();
 
@@ -49,10 +52,19 @@ namespace ClubeDaLeitura.ConsoleApp.ModuloEmprestimo
                 ListaEmprestimosMes();
                 return 'S';
             }
+            if(operacaoEscolhida == '6')
+            {
+                ListaEmprestimosDia();
+                return 'S';
+            }
+            if(operacaoEscolhida == '7')
+            {
+                DevolucaoEmprestimo();
+                return 'S';
+            }
 
             return operacaoEscolhida;
         }
-
 
         public override void VisualizarRegistros(bool exibirTitulo)
         {
@@ -236,6 +248,49 @@ namespace ClubeDaLeitura.ConsoleApp.ModuloEmprestimo
         }
 
 
+        public void ListaEmprestimosDia()
+        {
+            Console.WriteLine("Visualizando os Emprestimos do Mês...");
+            Console.WriteLine();
+
+            DateTime dataAtual = DateTime.Now;
+
+            ArrayList emprestimosDia = new ArrayList();
+
+            ArrayList emprestimosCadastrados = repositorio.SelecionarTodos();
+
+            foreach (Emprestimo emprestimo in emprestimosCadastrados)
+            {
+                if (emprestimo == null)
+                    continue;
+
+
+                if (emprestimo.DataEmprestimo.Day == dataAtual.Day)
+                {
+                    emprestimosDia.Add(emprestimo);
+                }
+            }
+
+            Console.WriteLine("-----------------------------------");
+            Console.WriteLine($"|       Emprestimos do Dia       |");
+            Console.WriteLine("-----------------------------------");
+            
+            foreach (Emprestimo emprestimo in emprestimosDia)
+            {
+                if (emprestimo == null)
+                    continue;
+
+
+                Console.WriteLine(
+                "| {0, -10} | {1, -20} | {2, -20} | {3, -10} |",
+
+                    emprestimo.Id, emprestimo.Amigo.Nome, emprestimo.DataEmprestimo, emprestimo.Status
+                );
+            }
+
+            Console.ReadLine();
+        }
+
 
         private string AdicionaNomeMes(int numeroMes)
         {
@@ -293,6 +348,18 @@ namespace ClubeDaLeitura.ConsoleApp.ModuloEmprestimo
             }
 
             return nomeMes;
+        }
+
+        private void DevolucaoEmprestimo()
+        {
+            VisualizarRegistros(false);
+
+            Console.WriteLine("Digita o ID do emprestimo que deseja concluir");
+            int idEmprestimo = Convert.ToInt32(Console.ReadLine());
+
+            Emprestimo emprestimoSelecionado = (Emprestimo)repositorio.SelecionarPorId(idEmprestimo);
+
+            emprestimoSelecionado.Status = "Concluido";
         }
     }
 }

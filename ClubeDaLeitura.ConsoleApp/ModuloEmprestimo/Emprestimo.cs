@@ -72,12 +72,11 @@ namespace ClubeDaLeitura.ConsoleApp.ModuloEmprestimo
 
         public string VerificaStatus()
         {
-            if(DataDevolucao > dataAtual)
-                return "Válido";
-
+            if (DataDevolucao < dataAtual)
+                return "Atrasado";
 
             else
-                return "Atrasado";
+                return "Válido";
         }
 
         public void VerificaMultasEmAberto(bool multaPendente)
